@@ -1,73 +1,30 @@
-import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import { Button, FlatList, StyleSheet, TextInput, View } from "react-native";
-import GoalInput from "./components/GoalInput";
-import GoalItem from "./components/GoalItem";
+import { StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Home from "./screens/Home";
+import AnotherScreen from "./screens/AnotherScreen";
+type RootStackParamList = {
+  Home: undefined;
+  AnotherScreen: undefined;
+};
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [courseGoals, setCourseGoals] = useState<
-    { id: string; text: string }[]
-  >([]);
-
-  const [modalIsVisible, setModalIsVisible] = useState<boolean>(false);
-
-  function addGoalHandler(
-    text: string,
-    setEnteredGoalText: (text: string) => void
-  ): void {
-    setCourseGoals((prev) => {
-      return [...prev, { id: Math.random().toString(), text }];
-    });
-    setEnteredGoalText("");
-    closeModalHandler();
-  }
-
-  const onDeleteHandler = (goalId: string) => {
-    setCourseGoals((prev) => {
-      return prev.filter((goal) => goal.id !== goalId);
-    });
-  };
-
-  const startAddGoalHandler = () => {
-    setModalIsVisible(true);
-  };
-
-  const closeModalHandler = () => {
-    setModalIsVisible(false);
-  };
-
   return (
-    < >
-      <StatusBar style="light"/>
-      <View style={styles.appContainer}>
-        <Button
-          title="Add New Goal"
-          color="#5e0acc"
-          onPress={startAddGoalHandler}
+    <NavigationContainer >
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{ title: "Home" }}
         />
-        <GoalInput
-          closeModalHandler={closeModalHandler}
-          modalIsVisible={modalIsVisible}
-          addGoalHandler={addGoalHandler}
+         <Stack.Screen
+          name="AnotherScreen"
+          component={AnotherScreen}
+          options={{ title: "Another Screen" }}
         />
-        <View style={styles.goalsContainer}>
-          <FlatList
-            data={courseGoals}
-            keyExtractor={(item, index) => {
-              return item.id;
-            }}
-            renderItem={(itemData) => {
-              return (
-                <GoalItem
-                  onDeleteHandler={onDeleteHandler}
-                  itemData={itemData}
-                />
-              );
-            }}
-          />
-        </View>
-      </View>
-    </>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
